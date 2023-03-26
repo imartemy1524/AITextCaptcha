@@ -15,6 +15,7 @@ img_width = 130
 img_height = 50
 lock = threading.Lock()
 logging_lock: "threading.Lock|None" = None  # you can use some existing lock for logging
+max_length = 7
 class VkCaptchaSolver:
     """
     Vk captcha handling
@@ -192,23 +193,30 @@ class VkCaptchaSolver:
         :return string, float
         """
         accuracy = 1
-        last = ''
+        last = None
         ans = []
-        for index, i in enumerate(i.argmax() for i in pred[0]):
-            if i == last:
-                continue
-            else:
-                last = i
-                if i != len(characters) + 2:
-                    ans.append(i)
-                    accuracy *= pred[0][index][i]
-        return "".join((characters[i - 1] for i in ans if i < len(characters)))[:8].replace(' ',''), accuracy
+        # pred - 3d tensor, we need 2d array - first element
+        for item in pred[0]:
+            # get index of element with max accuracy
+            char_ind = item.argmax()
+            # ignore duplicates and special characters
+            if char_ind != last and char_ind != 0 and char_ind != len(characters) + 1:
+                # this element is a character - append it to answer
+                ans.append(characters[char_ind - 1])
+                # Get accuracy for current character and
+                # multiply global accuracy by it
+                accuracy *= item[char_ind]
+            last = char_ind
+
+        answ = "".join(ans)[:max_length]
+        return answ, accuracy
 
     def vk_api_captcha_handler(self, captcha, minimum_accuracy=0.3, repeat_count=10):
         """vk_api.VkApi captcha handler function"""
         key, _ = self.solve(captcha.get_url(), minimum_accuracy=minimum_accuracy, repeat_count=repeat_count)
         try:
-            return captcha.try_again(key)
+            ans = captcha.try_again(key)
+            return ans
         except vk_api.ApiError as e:
             if e.code == vk_api.vk_api.CAPTCHA_ERROR_CODE:
                 with lock: VkCaptchaSolver.FAIL_COUNT += 1
