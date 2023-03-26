@@ -1,3 +1,4 @@
+### ORIGINAL REPOSITORY: [https://github.com/imartemy1524/vk_captcha](https://github.com/imartemy1524/vk_captcha) 
 <h1 align="center">
 <a href="https://github.com/imartemy1524/vk_captcha">vk_captcha</a> 
 - AI <a href="https://vk.com/dev">VK</a> captcha solver for <b>93.2%</b> accuracy
