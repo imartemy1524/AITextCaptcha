@@ -1,4 +1,5 @@
-Steps to train AI model:
+### Steps to train AI model:
+
 0) Install all requirements(if not yet) using command `pip install -r requirements.txt`
 1) download images from [here](https://mega.nz/folder/H4kHDA6b#s2ZHPAnKcfwdgnhSByRGow) (or use your own dataset), create folder **images** and place all dataset into 2 folders: **train** and **test**. Image name format: `answer123-randomseed.jpeg`
 2) Configure [code/utils/config.py](code/utils/config.py) file - img_width, img_height, format, ect.
