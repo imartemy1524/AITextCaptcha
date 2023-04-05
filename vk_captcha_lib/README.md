@@ -47,6 +47,18 @@ vk = VkApi(login='', password='', captcha_handler=solver.vk_api_captcha_handler)
 vk.method("any.method.with.captcha.will.be.handled")
 ```
 
+#### using [vkbottle](https://github.com/vkbottle/vkbottle):
+
+```python
+from vkbottle.bot import Bot # Or "from vkbottle.user import User"
+from vk_captcha import VkCaptchaSolver
+
+bot = Bot(token=...) # Or "bot = User(token=...)"
+solver = VkCaptchaSolver()
+
+bot.api.add_captcha_handler(solver.vkbottle_captcha_handler)
+```
+
 #### just solve captcha from *url* / *bytes*
 
 
@@ -85,7 +97,7 @@ async def captcha_solver():
     url = f"https://api.vk.com/captcha.php?sid={sid}&s={int(easy_captcha)}"
     answer, accuracy = await solver.solve_async(url=url, minimum_accuracy=0.4, repeat_count=10)
     print(f"Solved captcha = {answer} with accuracy {accuracy:.4}")
-asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy()) # Only in windows
 asyncio.run(captcha_solver())
 ```
 Also, you can get some statistics of solving captcha:
